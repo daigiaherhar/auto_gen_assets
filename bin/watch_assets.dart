@@ -76,11 +76,11 @@ void main(List<String> args) async {
     });
   });
 
-  // Handle graceful shutdown
-  ProcessSignal.sigint.watch().listen((_) {
-    print('\n👋 Stopping watcher...');
-    exit(0);
-  });
+  // // Handle graceful shutdown
+  // ProcessSignal.sigint.watch().listen((_) {
+  //   print('\n👋 Stopping watcher...');
+  //   exit(0);
+  // });
 
   // Keep the script running forever
 
