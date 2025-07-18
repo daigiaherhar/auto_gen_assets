@@ -28,8 +28,7 @@ dev_dependencies:
   build_runner: ^2.4.7
   build: ^2.4.1
 
-executables:
-  watch: bin/watch_assets.dart
+
 # The following section is specific to Flutter packages.
 flutter:
 

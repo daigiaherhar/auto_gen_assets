@@ -4,9 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-## [1.0.2] 
-- fix watcher dependency in pubspec.yaml
-- 
+
+## [1.0.2] - 2024-07-18
+
+### Added
+- Shell scripts for easy asset generation and watching
+- Improved watcher with better error handling and graceful shutdown
+- Command line options for customizing assets directory and output path
+- Enhanced AssetGenerator with proper folder structure organization
+
+### Fixed
+- Fixed watcher to keep running indefinitely
+- Removed invalid executables section from pubspec.yaml
+- Improved generated code structure with proper class organization
+
 ## [1.0.1] 
 
 ### Added
@@ -49,8 +60,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive unit tests
 - Flutter package structure
 - Command-line tool support
-
-## [1.0.1] 2025-07-18
-
-- Add support for watcher to auto-generate assets when files change.
-- Improve watcher.
