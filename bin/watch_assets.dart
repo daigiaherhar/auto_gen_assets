@@ -6,9 +6,9 @@ import 'package:watcher/watcher.dart';
 import 'package:auto_gen_assets/auto_gen_assets.dart';
 
 /// Watcher script for auto-generating assets when files change
-/// 
+///
 /// Usage: dart run bin/watch_assets.dart
-/// 
+///
 /// This script watches the assets directory and automatically
 /// regenerates the assets.dart file whenever files are added,
 /// modified, or removed.
@@ -21,7 +21,7 @@ void main(List<String> args) async {
   // Parse command line arguments
   String? outputFile;
   String? assetsDirectory;
-  
+
   for (int i = 0; i < args.length; i++) {
     switch (args[i]) {
       case '--output':
@@ -61,14 +61,14 @@ void main(List<String> args) async {
 
   // Set up watcher
   final watcher = DirectoryWatcher(finalAssetsDirectory);
-  
+
   // Debounce timer to avoid multiple rapid generations
   Timer? debounceTimer;
-  
+
   watcher.events.listen((event) {
     // Cancel previous timer if it exists
     debounceTimer?.cancel();
-    
+
     // Set new timer to debounce rapid changes
     debounceTimer = Timer(const Duration(milliseconds: 500), () {
       print('🔄 Detected change: ${event.path}');
@@ -82,8 +82,9 @@ void main(List<String> args) async {
     exit(0);
   });
 
-  // Keep the script running
-  await Future.delayed(Duration.zero);
+  // Keep the script running forever
+
+  await Completer<void>().future;
 }
 
 void _printHelp() {
@@ -115,7 +116,7 @@ Future<void> _generateAssets(String assetsDirectory, String outputFile) async {
     );
 
     final success = generator.generate();
-    
+
     if (success) {
       final timestamp = DateTime.now().toLocal().toString().split('.')[0];
       print('✅ Assets regenerated at $timestamp');
