@@ -1,13 +1,13 @@
 import 'dart:io';
-import 'models/asset_item.dart';
 
-/// A utility class for automatically generating Dart code for assets.
-/// 
-/// This class scans an assets directory and generates a Dart file with
-/// strongly-typed asset references organized by folder structure.
 class AssetGenerator {
-  /// Creates an [AssetGenerator] with the specified configuration.
-  const AssetGenerator({
+  final String assetsDirectory;
+  final String outputFile;
+  final String className;
+  final bool ignoreHiddenFiles;
+  final bool ignoreEnvFiles;
+
+  AssetGenerator({
     this.assetsDirectory = 'assets',
     this.outputFile = 'lib/generated/assets.dart',
     this.className = 'Assets',
@@ -15,193 +15,88 @@ class AssetGenerator {
     this.ignoreEnvFiles = true,
   });
 
-  /// The directory containing the assets to scan.
-  final String assetsDirectory;
-
-  /// The output file path where the generated code will be written.
-  final String outputFile;
-
-  /// The name of the main class to generate (default: 'Assets').
-  final String className;
-
-  /// Whether to ignore hidden files (files starting with '.').
-  final bool ignoreHiddenFiles;
-
-  /// Whether to ignore environment files (files containing '.env').
-  final bool ignoreEnvFiles;
-
-  /// Generates the assets Dart file from the assets directory.
-  /// 
-  /// Returns `true` if the generation was successful, `false` otherwise.
   bool generate() {
     final assetsDir = Directory(assetsDirectory);
     final output = File(outputFile);
     final buffer = StringBuffer();
 
-    // Write file header
-    _writeHeader(buffer);
+    buffer.writeln('/// This file is auto-generated. DO NOT EDIT.');
+    buffer.writeln('class $className {');
+    buffer.writeln('  const $className();\n');
 
     if (!assetsDir.existsSync()) {
-      print('Assets directory not found: $assetsDirectory');
+      stderr.writeln('❌ Directory not found: $assetsDirectory');
       return false;
     }
 
-    final grouped = _groupAssets(assetsDir);
-    
-    if (grouped.isEmpty) {
-      print('No assets found in directory: $assetsDirectory');
-      return false;
-    }
-
-    // Write main Assets class
-    _writeMainAssetsClass(buffer, grouped);
-
-    // Write individual folder classes
-    _writeFolderClasses(buffer, grouped);
-
-    // Write the file
-    output.createSync(recursive: true);
-    output.writeAsStringSync(buffer.toString());
-
-    final totalAssets = grouped.values.expand((e) => e).length;
-    print('✅ Assets class generated with $totalAssets assets.');
-    print('📁 Output file: $outputFile');
-    
-    return true;
-  }
-
-  /// Groups assets by their folder structure.
-  Map<String, List<AssetItem>> _groupAssets(Directory assetsDir) {
-    final Map<String, List<AssetItem>> grouped = {};
-
-    final allFiles = assetsDir
-        .listSync(recursive: true)
-        .whereType<File>()
-        .toList();
+    final grouped = <String, List<_AssetItem>>{};
+    final allFiles = assetsDir.listSync(recursive: true).whereType<File>();
 
     for (var file in allFiles) {
       final path = file.path.replaceAll('\\', '/');
-      final fileName = file.uri.pathSegments.last;
+      final name = file.uri.pathSegments.last;
 
-      // Skip files based on configuration
-      if (_shouldSkipFile(fileName)) {
+      if ((ignoreHiddenFiles && name.startsWith('.')) ||
+          (ignoreEnvFiles &&
+              (name.endsWith('.env') || name.contains('.env.')))) {
         continue;
       }
 
-      // Get relative path from assets directory
-      final relativePath = path.substring(assetsDir.path.length + 1);
-      final parts = relativePath.split('/');
-      if (parts.length < 2) continue; // Skip if not in subfolder
+      final parts = path.split('/');
+      if (parts.length < 3) continue;
 
-      final folder = parts[0]; // e.g., 'images', 'animations', etc.
-      final lastPart = parts.last;
-      final fileBaseName = lastPart.startsWith('.') 
-          ? lastPart.substring(1).split('.').first 
-          : lastPart.split('.').first;
-      final assetName = _toCamelCase(fileBaseName);
-      
-      // Skip if the asset name is empty (e.g., hidden files with no name)
-      if (assetName.isEmpty) {
-        continue;
-      }
-      
+      final folder = parts[1];
       grouped
           .putIfAbsent(folder, () => [])
           .add(
-            AssetItem(
-              name: assetName,
-              path: 'assets/$relativePath',
+            _AssetItem(
+              name: _toCamelCase(parts.last.split('.').first),
+              path: path,
             ),
           );
     }
 
-    return grouped;
-  }
-
-  /// Determines if a file should be skipped based on configuration.
-  bool _shouldSkipFile(String fileName) {
-    // Skip hidden files if configured to ignore them
-    if (ignoreHiddenFiles && fileName.startsWith('.')) {
-      return true;
-    }
-    
-    // Skip env files if configured to ignore them
-    if (ignoreEnvFiles && (fileName.endsWith('.env') || fileName.contains('.env.'))) {
-      return true;
-    }
-    
-    // Skip files with empty names
-    if (fileName.isEmpty || fileName == '.') {
-      return true;
-    }
-    
-    return false;
-  }
-
-  /// Writes the file header and main Assets class.
-  void _writeHeader(StringBuffer buffer) {
-    buffer.writeln('// This file is automatically generated. DO NOT EDIT.');
-    buffer.writeln('// Generated by auto_gen_assets package.');
-    buffer.writeln('');
-  }
-
-  /// Writes the main Assets class with static references to folder classes.
-  void _writeMainAssetsClass(StringBuffer buffer, Map<String, List<AssetItem>> grouped) {
-    buffer.writeln('class Assets {');
-    buffer.writeln('  Assets._();\n');
-
     grouped.forEach((folder, items) {
       final className = _toPascalCase(folder);
-      final camelCaseFolder = _toCamelCase(folder);
-      buffer.writeln('  static const $className $camelCaseFolder = $className();');
+      buffer.writeln('  static const $className $folder = $className();');
     });
 
     buffer.writeln('}\n');
-  }
 
-  /// Writes individual classes for each asset folder.
-  void _writeFolderClasses(StringBuffer buffer, Map<String, List<AssetItem>> grouped) {
     grouped.forEach((folder, items) {
       final className = _toPascalCase(folder);
       buffer.writeln('class $className {');
       buffer.writeln('  const $className();');
-      
-      for (var item in items) {
+      for (final item in items) {
         buffer.writeln("  final String ${item.name} = '${item.path}';");
       }
-      
       buffer.writeln('}\n');
     });
-  }
 
-  /// Converts a string to PascalCase.
-  /// 
-  /// Example: 'my_folder_name' -> 'MyFolderName'
-  String _toPascalCase(String text) {
-    return text
-        .split(RegExp(r'[_\-\s]+'))
-        .map((w) => w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '')
-        .join();
+    output.createSync(recursive: true);
+    output.writeAsStringSync(buffer.toString());
+    return true;
   }
+}
 
-  /// Converts a string to camelCase.
-  /// 
-  /// Example: 'my_file_name' -> 'myFileName'
-  String _toCamelCase(String text) {
-    // Handle hidden files (starting with dot)
-    if (text.startsWith('.')) {
-      final withoutDot = text.substring(1);
-      if (withoutDot.isEmpty) return '';
-      return _toCamelCase(withoutDot);
-    }
-    
-    final parts = text.split(RegExp(r'[_\-\s]+'));
-    if (parts.isEmpty) return '';
-    final first = parts.first.toLowerCase();
-    final rest = parts
-        .skip(1)
-        .map((w) => w[0].toUpperCase() + w.substring(1))
-        .join();
-    return '$first$rest';
-  }
-} 
+class _AssetItem {
+  final String name;
+  final String path;
+  _AssetItem({required this.name, required this.path});
+}
+
+String _toPascalCase(String text) => text
+    .split(RegExp(r'[_\-\s]+'))
+    .map((w) => w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '')
+    .join();
+
+String _toCamelCase(String text) {
+  final parts = text.split(RegExp(r'[_\-\s]+'));
+  if (parts.isEmpty) return '';
+  final first = parts.first.toLowerCase();
+  final rest = parts
+      .skip(1)
+      .map((w) => '${w[0].toUpperCase()}${w.substring(1)}')
+      .join();
+  return '$first$rest';
+}

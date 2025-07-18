@@ -1,6 +1,10 @@
 import 'package:auto_gen_assets/auto_gen_assets.dart';
 
 void main() {
-  const generator = AssetGenerator();
-  generator.generate();
+  final success = AssetGenerator().generate();
+  if (success) {
+    print('✅ Assets generated.');
+  } else {
+    print('❌ Failed to generate assets.');
+  }
 }
