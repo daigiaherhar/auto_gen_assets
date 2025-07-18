@@ -77,14 +77,15 @@ void main(List<String> args) async {
   });
 
   // // Handle graceful shutdown
-  // ProcessSignal.sigint.watch().listen((_) {
-  //   print('\n👋 Stopping watcher...');
-  //   exit(0);
-  // });
+  ProcessSignal.sigint.watch().listen((_) {
+    print('\n👋 Stopping watcher...');
+    exit(0);
+  });
 
   // Keep the script running forever
-
-  await Completer<void>().future;
+  // Keep the script running
+  await Future.delayed(Duration.zero);
+  // await Completer<void>().future;
 }
 
 void _printHelp() {
