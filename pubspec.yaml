@@ -7,8 +7,10 @@ issue_tracker: https://github.com/daigiaherhar/auto_gen_assets/issues
 
 # Scripts for easy access
 scripts:
-  watch: dart run bin/watch_assets.dart
-  generate: dart run bin/auto_gen_assets.dart
+  watch: dart run bin/watch_assets.dart --assets-dir example/assets --output example/lib/generated/assets.dart
+  watch-example: dart run bin/watch_assets.dart --assets-dir example/assets --output example/lib/generated/assets.dart
+  generate: dart run bin/auto_gen_assets.dart --assets-dir example/assets --output example/lib/generated/assets.dart
+  generate-example: dart run bin/auto_gen_assets.dart --assets-dir example/assets --output example/lib/generated/assets.dart
 
 environment:
   sdk: ^3.8.1

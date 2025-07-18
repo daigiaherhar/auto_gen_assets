@@ -11,6 +11,7 @@ class Assets {
 
 class Images {
   const Images();
+  final String testWatcher = 'assets/images/test_watcher.png';
   final String background = 'assets/images/background.jpg';
   final String logo = 'assets/images/logo.png';
 }
