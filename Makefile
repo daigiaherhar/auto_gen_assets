@@ -16,7 +16,12 @@ generate:
 # Watch assets directory for changes
 watch:
 	@echo "🚀 Starting asset watcher..."
-	dart run bin/watch_assets.dart
+	dart run bin/watch_assets.dart --assets-dir example/assets --output example/lib/generated/assets.dart
+
+# Watch for development (example project)
+watch-example:
+	@echo "🚀 Starting asset watcher for example project..."
+	dart run bin/watch_assets.dart --assets-dir example/assets --output example/lib/generated/assets.dart
 
 # Clean generated files
 clean:

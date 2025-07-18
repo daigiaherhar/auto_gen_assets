@@ -10,6 +10,7 @@ class AssetGenerator {
   const AssetGenerator({
     this.assetsDirectory = 'assets',
     this.outputFile = 'lib/generated/assets.dart',
+    this.className = 'Assets',
     this.ignoreHiddenFiles = true,
     this.ignoreEnvFiles = true,
   });
@@ -19,6 +20,9 @@ class AssetGenerator {
 
   /// The output file path where the generated code will be written.
   final String outputFile;
+
+  /// The name of the main class to generate (default: 'Assets').
+  final String className;
 
   /// Whether to ignore hidden files (files starting with '.').
   final bool ignoreHiddenFiles;
