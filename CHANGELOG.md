@@ -4,8 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [1.0.1] - 2024-12-19
+## [1.0.2] 
+- fix watcher dependency in pubspec.yaml
+- 
+## [1.0.1] 
 
 ### Added
 - Asset watcher functionality for automatic regeneration
@@ -17,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Moved watcher dependency to main dependencies section
 - Updated package metadata for pub.dev publishing
 
-## [1.0.0] - 2025-07-18
+## [1.0.0] 
 
 ### Added
 - Initial release of auto_gen_assets package

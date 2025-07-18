@@ -5,16 +5,16 @@
   "packages": [
     {
       "name": "auto_gen_assets",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "dependencies": [
-        "flutter"
+        "flutter",
+        "watcher"
       ],
       "devDependencies": [
         "build",
         "build_runner",
         "flutter_lints",
-        "flutter_test",
-        "watcher"
+        "flutter_test"
       ]
     },
     {
@@ -80,14 +80,6 @@
       ]
     },
     {
-      "name": "watcher",
-      "version": "1.1.2",
-      "dependencies": [
-        "async",
-        "path"
-      ]
-    },
-    {
       "name": "flutter_lints",
       "version": "5.0.0",
       "dependencies": [
@@ -120,6 +112,14 @@
         "test_api",
         "vector_math",
         "vm_service"
+      ]
+    },
+    {
+      "name": "watcher",
+      "version": "1.1.2",
+      "dependencies": [
+        "async",
+        "path"
       ]
     },
     {
