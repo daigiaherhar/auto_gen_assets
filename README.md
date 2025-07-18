@@ -153,6 +153,24 @@ Examples:
 
 ## Integration with Build Process
 
+### Using Watcher (Recommended)
+
+The package includes a built-in watcher that automatically regenerates assets when files change:
+
+```bash
+# Start watching for changes
+make watch
+
+# Or directly with dart
+dart run bin/watch_assets.dart
+```
+
+The watcher will:
+- ✅ Monitor the `assets` directory for any changes
+- 🔄 Automatically regenerate `assets.dart` when files are added/modified/removed
+- ⏱️ Debounce rapid changes to avoid excessive regeneration
+- 🛑 Gracefully handle Ctrl+C to stop watching
+
 ### Using build_runner
 
 Add to your `pubspec.yaml`:
@@ -179,16 +197,23 @@ targets:
 
 ### Using Makefile
 
-Create a `Makefile` in your project root:
+The project includes a `Makefile` with convenient commands:
 
-```makefile
-.PHONY: generate-assets
-generate-assets:
-	dart run auto_gen_assets
+```bash
+# Generate assets once
+make generate
 
-.PHONY: watch-assets
-watch-assets:
-	fswatch -o assets | xargs -n1 -I{} dart run auto_gen_assets
+# Watch for changes (auto-regenerate)
+make watch
+
+# Clean generated files
+make clean
+
+# Run tests
+make test
+
+# Show all available commands
+make help
 ```
 
 ## Examples
