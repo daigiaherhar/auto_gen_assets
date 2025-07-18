@@ -16,7 +16,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  auto_gen_assets: ^1.0.0
+  auto_gen_assets: ^1.0.2
 ```
 
 ## Usage
@@ -44,7 +44,11 @@ assets/
 2. **Run the generator**:
 
 ```bash
+# Generate once
 dart run auto_gen_assets
+
+# Or with watch mode (auto-regenerate on changes)
+dart run auto_gen_assets --watch
 ```
 
 3. **Use the generated assets** in your Flutter code:
@@ -64,6 +68,68 @@ class MyWidget extends StatelessWidget {
     );
   }
 }
+```
+
+### Using Watcher (Auto-regenerate on changes)
+
+After installing the package, you can use the watcher functionality:
+
+#### Quick Setup (Recommended)
+
+1. **Create a simple script** in your project root:
+
+**For macOS/Linux** - Create `watch.sh`:
+```bash
+#!/bin/bash
+dart run auto_gen_assets --watch
+```
+
+**For Windows** - Create `watch.bat`:
+```batch
+dart run auto_gen_assets --watch
+```
+
+2. **Make it executable** (macOS/Linux only):
+```bash
+chmod +x watch.sh
+```
+
+3. **Start watching**:
+```bash
+# macOS/Linux
+./watch.sh
+
+# Windows
+watch.bat
+```
+
+#### Alternative: Direct commands
+```bash
+# Watch for changes and auto-regenerate
+dart run auto_gen_assets --watch
+
+# Generate once
+dart run auto_gen_assets
+```
+
+#### What the watcher does:
+- ✅ **Monitors** your `assets/` directory for changes
+- 🔄 **Auto-regenerates** `lib/generated/assets.dart` when files are added/removed/modified
+- ⏱️ **Debounces** rapid changes to avoid excessive regeneration
+- 🛑 **Graceful shutdown** with Ctrl+C
+
+#### Example workflow:
+```bash
+# Terminal 1: Start watcher
+./watch.sh
+
+# Terminal 2: Add new assets
+cp new_image.png assets/images/
+# Watcher automatically updates lib/generated/assets.dart
+
+# Use in your code
+import 'generated/assets.dart';
+Image.asset(Assets.images.newImage);
 ```
 
 ### Programmatic Usage
