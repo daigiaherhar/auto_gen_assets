@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2024-07-18
+
+### Added
+- Background watcher functionality with `watcher.sh` and `watcher.bat` scripts
+- Integrated watcher directly into package (no need for separate bin files)
+- Background process management with start/stop/status/logs commands
+- Cross-platform support (macOS/Linux/Windows)
+
+### Fixed
+- Watcher now works after installing package from pub.dev
+- Improved command line interface with `--watch` flag
+- Better error handling and process management
+
 ## [1.0.2] - 2024-07-18
 
 ### Added

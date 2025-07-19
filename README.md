@@ -16,7 +16,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  auto_gen_assets: ^1.0.2
+  auto_gen_assets: ^1.0.3
 ```
 
 ## Usage
@@ -74,9 +74,46 @@ class MyWidget extends StatelessWidget {
 
 After installing the package, you can use the watcher functionality:
 
-#### Quick Setup (Recommended)
+#### Option 1: Background Watcher (Recommended)
 
-1. **Create a simple script** in your project root:
+**For macOS/Linux** - Copy `watcher.sh` to your project:
+```bash
+# Copy the watcher script
+curl -o watcher.sh https://raw.githubusercontent.com/daigiaherhar/auto_gen_assets/main/watcher.sh
+chmod +x watcher.sh
+
+# Start watcher in background
+./watcher.sh start
+
+# Check status
+./watcher.sh status
+
+# View logs
+./watcher.sh logs
+
+# Stop watcher
+./watcher.sh stop
+```
+
+**For Windows** - Copy `watcher.bat` to your project:
+```batch
+# Copy the watcher script
+curl -o watcher.bat https://raw.githubusercontent.com/daigiaherhar/auto_gen_assets/main/watcher.bat
+
+# Start watcher in background
+watcher.bat start
+
+# Check status
+watcher.bat status
+
+# View logs
+watcher.bat logs
+
+# Stop watcher
+watcher.bat stop
+```
+
+#### Option 2: Foreground Watcher
 
 **For macOS/Linux** - Create `watch.sh`:
 ```bash
@@ -89,21 +126,16 @@ dart run auto_gen_assets --watch
 dart run auto_gen_assets --watch
 ```
 
-2. **Make it executable** (macOS/Linux only):
-```bash
-chmod +x watch.sh
-```
-
-3. **Start watching**:
+Then use:
 ```bash
 # macOS/Linux
-./watch.sh
+chmod +x watch.sh && ./watch.sh
 
 # Windows
 watch.bat
 ```
 
-#### Alternative: Direct commands
+#### Option 3: Direct commands
 ```bash
 # Watch for changes and auto-regenerate
 dart run auto_gen_assets --watch
@@ -116,20 +148,25 @@ dart run auto_gen_assets
 - ✅ **Monitors** your `assets/` directory for changes
 - 🔄 **Auto-regenerates** `lib/generated/assets.dart` when files are added/removed/modified
 - ⏱️ **Debounces** rapid changes to avoid excessive regeneration
-- 🛑 **Graceful shutdown** with Ctrl+C
+- 🛑 **Graceful shutdown** with Ctrl+C (foreground) or stop command (background)
 
-#### Example workflow:
+#### Example workflow with background watcher:
 ```bash
-# Terminal 1: Start watcher
-./watch.sh
+# Start watcher in background
+./watcher.sh start
 
-# Terminal 2: Add new assets
+# Add new assets (watcher runs in background)
 cp new_image.png assets/images/
 # Watcher automatically updates lib/generated/assets.dart
 
-# Use in your code
-import 'generated/assets.dart';
-Image.asset(Assets.images.newImage);
+# Check if watcher is running
+./watcher.sh status
+
+# View watcher logs
+./watcher.sh logs
+
+# Stop watcher when done
+./watcher.sh stop
 ```
 
 ### Programmatic Usage
