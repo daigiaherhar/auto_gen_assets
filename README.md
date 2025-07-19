@@ -74,11 +74,32 @@ class MyWidget extends StatelessWidget {
 
 After installing the package, you can use the watcher functionality:
 
-#### Option 1: Background Watcher (Recommended)
+#### Option 1: Simple Watcher (Recommended)
+
+**For macOS/Linux** - Copy `simple_watcher.sh` to your project:
+```bash
+# Copy the simple watcher script
+curl -o simple_watcher.sh https://raw.githubusercontent.com/daigiaherhar/auto_gen_assets/main/simple_watcher.sh
+chmod +x simple_watcher.sh
+
+# Start watcher (foreground)
+./simple_watcher.sh
+```
+
+**For Windows** - Copy `simple_watcher.bat` to your project:
+```batch
+# Copy the simple watcher script
+curl -o simple_watcher.bat https://raw.githubusercontent.com/daigiaherhar/auto_gen_assets/main/simple_watcher.bat
+
+# Start watcher (foreground)
+simple_watcher.bat
+```
+
+#### Option 2: Background Watcher
 
 **For macOS/Linux** - Copy `watcher.sh` to your project:
 ```bash
-# Copy the watcher script
+# Copy the background watcher script
 curl -o watcher.sh https://raw.githubusercontent.com/daigiaherhar/auto_gen_assets/main/watcher.sh
 chmod +x watcher.sh
 
@@ -167,6 +188,43 @@ cp new_image.png assets/images/
 
 # Stop watcher when done
 ./watcher.sh stop
+
+## Troubleshooting
+
+### Common Issues
+
+**❌ "Could not find file `bin/watch_assets.dart`"**
+- **Solution**: Use the new CLI command: `dart run auto_gen_assets --watch`
+- **Or**: Use the simple watcher script: `./simple_watcher.sh`
+
+**❌ "auto_gen_assets not found in pubspec.yaml"**
+- **Solution**: Add to your `pubspec.yaml`:
+```yaml
+dependencies:
+  auto_gen_assets: ^1.0.4
+```
+
+**❌ "Assets directory not found"**
+- **Solution**: Create the assets directory: `mkdir assets`
+
+**❌ Watcher not detecting changes**
+- **Solution**: Make sure you're running from project root with `pubspec.yaml`
+- **Try**: Restart watcher with `./simple_watcher.sh`
+
+### Quick Fix Commands
+
+```bash
+# 1. Add package to pubspec.yaml
+echo "  auto_gen_assets: ^1.0.4" >> pubspec.yaml
+
+# 2. Get dependencies
+dart pub get
+
+# 3. Create assets directory
+mkdir -p assets
+
+# 4. Start watcher
+dart run auto_gen_assets --watch
 ```
 
 ### Programmatic Usage
