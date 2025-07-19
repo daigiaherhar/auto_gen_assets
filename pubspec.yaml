@@ -1,6 +1,6 @@
 name: auto_gen_assets
 description: "A Flutter package for automatically generating strongly-typed asset references from your assets directory."
-version: 1.0.3
+version: 1.0.2
 homepage: https://daigiaherhar.github.io/portfolio_thanh_tung/
 repository: https://github.com/daigiaherhar/auto_gen_assets
 issue_tracker: https://github.com/daigiaherhar/auto_gen_assets/issues
@@ -29,8 +29,6 @@ dev_dependencies:
   build: ^2.4.1
 
 
-executables:
-  watch_assets: bin/watch_assets.dart
 # The following section is specific to Flutter packages.
 flutter:
 
