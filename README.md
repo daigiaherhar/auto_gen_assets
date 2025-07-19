@@ -16,7 +16,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  auto_gen_assets: ^1.0.3
+  auto_gen_assets: ^1.0.4
 ```
 
 ## Usage
