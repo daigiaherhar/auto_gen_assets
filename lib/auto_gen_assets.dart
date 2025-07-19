@@ -29,7 +29,8 @@ class AssetWatcher {
   /// Start watching the assets directory for changes
   Future<void> watch() async {
     print('🚀 Starting auto_gen_assets watcher...');
-    print('📁 Watching assets directory for changes...');
+    print('📁 Watching assets directory: $assetsDirectory');
+    print('📄 Output file: $outputFile');
     print('⏹️  Press Ctrl+C to stop\n');
 
     // Check if assets directory exists
@@ -42,8 +43,10 @@ class AssetWatcher {
     // Generate assets initially
     await _generateAssets();
 
-    // Set up watcher
-    final watcher = DirectoryWatcher(assetsDirectory);
+    // Set up watcher with polling for better reliability
+    final watcher = PollingDirectoryWatcher(assetsDirectory);
+    
+    print('👀 Watcher is now active and monitoring for changes...\n');
     
     // Debounce timer to avoid multiple rapid generations
     Timer? debounceTimer;
@@ -53,11 +56,17 @@ class AssetWatcher {
       debounceTimer?.cancel();
       
       // Set new timer to debounce rapid changes
-      debounceTimer = Timer(const Duration(milliseconds: 500), () {
-        print('🔄 Detected change: ${event.path}');
+      debounceTimer = Timer(const Duration(milliseconds: 300), () {
+        final relativePath = event.path.replaceFirst('$assetsDirectory/', '');
+        print('🔄 Detected change: $relativePath (${event.type})');
         _generateAssets();
       });
+    }, onError: (error) {
+      print('❌ Watcher error: $error');
     });
+    
+    // Also watch for subdirectory changes
+    _watchSubdirectories(assetsDirectory);
 
     // Handle graceful shutdown
     ProcessSignal.sigint.watch().listen((_) {
@@ -93,6 +102,34 @@ class AssetWatcher {
       }
     } catch (e) {
       print('❌ Error generating assets: $e');
+    }
+  }
+  
+  /// Watch subdirectories for changes
+  void _watchSubdirectories(String directoryPath) {
+    try {
+      final directory = Directory(directoryPath);
+      if (!directory.existsSync()) return;
+      
+      final entities = directory.listSync();
+      for (final entity in entities) {
+        if (entity is Directory) {
+          // Watch each subdirectory
+          final subWatcher = PollingDirectoryWatcher(entity.path);
+          subWatcher.events.listen((event) {
+            final relativePath = event.path.replaceFirst('$assetsDirectory/', '');
+            print('🔄 Detected change in subdirectory: $relativePath (${event.type})');
+            _generateAssets();
+          }, onError: (error) {
+            print('❌ Subdirectory watcher error: $error');
+          });
+          
+          // Recursively watch nested subdirectories
+          _watchSubdirectories(entity.path);
+        }
+      }
+    } catch (e) {
+      print('❌ Error watching subdirectories: $e');
     }
   }
 }
