@@ -58,7 +58,7 @@
     },
     {
       "name": "auto_gen_assets",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "dependencies": [
         "flutter",
         "watcher"
