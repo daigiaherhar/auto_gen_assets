@@ -201,7 +201,7 @@ cp new_image.png assets/images/
 - **Solution**: Add to your `pubspec.yaml`:
 ```yaml
 dependencies:
-  auto_gen_assets: ^1.0.4
+  auto_gen_assets: ^1.0.5
 ```
 
 **❌ "Assets directory not found"**
@@ -215,7 +215,7 @@ dependencies:
 
 ```bash
 # 1. Add package to pubspec.yaml
-echo "  auto_gen_assets: ^1.0.4" >> pubspec.yaml
+echo "  auto_gen_assets: ^1.0.5" >> pubspec.yaml
 
 # 2. Get dependencies
 dart pub get
