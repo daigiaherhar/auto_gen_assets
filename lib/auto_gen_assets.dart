@@ -1,4 +1,4 @@
-library auto_gen_assets;
+// Auto Gen Assets Library
 
 export 'src/auto_gen_assets.dart';
 export 'src/asset_generator.dart';
@@ -45,26 +45,29 @@ class AssetWatcher {
 
     // Set up watcher with polling for better reliability
     final watcher = PollingDirectoryWatcher(assetsDirectory);
-    
+
     print('👀 Watcher is now active and monitoring for changes...\n');
-    
+
     // Debounce timer to avoid multiple rapid generations
     Timer? debounceTimer;
-    
-    watcher.events.listen((event) {
-      // Cancel previous timer if it exists
-      debounceTimer?.cancel();
-      
-      // Set new timer to debounce rapid changes
-      debounceTimer = Timer(const Duration(milliseconds: 300), () {
-        final relativePath = event.path.replaceFirst('$assetsDirectory/', '');
-        print('🔄 Detected change: $relativePath (${event.type})');
-        _generateAssets();
-      });
-    }, onError: (error) {
-      print('❌ Watcher error: $error');
-    });
-    
+
+    watcher.events.listen(
+      (event) {
+        // Cancel previous timer if it exists
+        debounceTimer?.cancel();
+
+        // Set new timer to debounce rapid changes
+        debounceTimer = Timer(const Duration(milliseconds: 300), () {
+          final relativePath = event.path.replaceFirst('$assetsDirectory/', '');
+          print('🔄 Detected change: $relativePath (${event.type})');
+          _generateAssets();
+        });
+      },
+      onError: (error) {
+        print('❌ Watcher error: $error');
+      },
+    );
+
     // Also watch for subdirectory changes
     _watchSubdirectories(assetsDirectory);
 
@@ -76,7 +79,7 @@ class AssetWatcher {
 
     // Keep the script running
     await Future.delayed(Duration.zero);
-    
+
     // Keep the script alive indefinitely
     await Future.delayed(Duration(days: 365));
   }
@@ -93,7 +96,7 @@ class AssetWatcher {
       );
 
       final success = generator.generate();
-      
+
       if (success) {
         final timestamp = DateTime.now().toLocal().toString().split('.')[0];
         print('✅ Assets regenerated at $timestamp');
@@ -104,26 +107,34 @@ class AssetWatcher {
       print('❌ Error generating assets: $e');
     }
   }
-  
+
   /// Watch subdirectories for changes
   void _watchSubdirectories(String directoryPath) {
     try {
       final directory = Directory(directoryPath);
       if (!directory.existsSync()) return;
-      
+
       final entities = directory.listSync();
       for (final entity in entities) {
         if (entity is Directory) {
           // Watch each subdirectory
           final subWatcher = PollingDirectoryWatcher(entity.path);
-          subWatcher.events.listen((event) {
-            final relativePath = event.path.replaceFirst('$assetsDirectory/', '');
-            print('🔄 Detected change in subdirectory: $relativePath (${event.type})');
-            _generateAssets();
-          }, onError: (error) {
-            print('❌ Subdirectory watcher error: $error');
-          });
-          
+          subWatcher.events.listen(
+            (event) {
+              final relativePath = event.path.replaceFirst(
+                '$assetsDirectory/',
+                '',
+              );
+              print(
+                '🔄 Detected change in subdirectory: $relativePath (${event.type})',
+              );
+              _generateAssets();
+            },
+            onError: (error) {
+              print('❌ Subdirectory watcher error: $error');
+            },
+          );
+
           // Recursively watch nested subdirectories
           _watchSubdirectories(entity.path);
         }
@@ -141,7 +152,7 @@ void main(List<String> args) async {
   String? outputFile;
   String? className;
   bool isWatchMode = false;
-  
+
   for (int i = 0; i < args.length; i++) {
     switch (args[i]) {
       case '--watch':
@@ -191,7 +202,7 @@ void main(List<String> args) async {
       outputFile: outputFile ?? 'lib/generated/assets.dart',
       className: className ?? 'Assets',
     );
-    
+
     final success = generator.generate();
     exit(success ? 0 : 1);
   }

@@ -7,7 +7,7 @@ void main(List<String> args) async {
   String? outputFile;
   String? className;
   bool isWatchMode = false;
-  
+
   for (int i = 0; i < args.length; i++) {
     switch (args[i]) {
       case '--watch':
@@ -57,7 +57,7 @@ void main(List<String> args) async {
       outputFile: outputFile ?? 'lib/generated/assets.dart',
       className: className ?? 'Assets',
     );
-    
+
     final success = generator.generate();
     exit(success ? 0 : 1);
   }
